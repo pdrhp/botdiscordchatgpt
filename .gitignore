@@ -1,1 +1,63 @@
 .env
+# Arquivos e diretórios específicos do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+botdiscordchatgpt.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Ambientes virtuais
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+myenv/
+
+# Arquivos de ambiente e tokens
+.env
+tokens.env
+*.env
+
+# Arquivos de cache e logs
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+logs/
+
+# Arquivos específicos do IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Arquivos específicos do projeto
+*.db
+*.sqlite3

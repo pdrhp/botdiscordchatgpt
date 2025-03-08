@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "botdiscordchatgpt"
+version = "0.1.0"
+description = "Bot do Discord integrado com Groq e OpenAI voltado para o servidor Chaparral"
+authors = [
+    {name = "pdrhp", email = "pedrohsp2004@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+dependencies = [
+    "discord.py>=2.3.2",
+    "groq>=0.4.0",
+    "openai>=1.12.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.2",
+    "loguru>=0.7.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
