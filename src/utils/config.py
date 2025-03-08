@@ -17,8 +17,8 @@ class BotConfig(BaseModel):
     command_prefix: str = Field(default="!", description="Prefixo para comandos tradicionais")
     description: str = Field(default="Bot do Discord integrado com modelos de IA", description="Descrição do bot")
 
-    ai_model: str = Field(default="llama3", description="Modelo de IA padrão para o Groq")
-    openai_model: str = Field(default="gpt-3.5-turbo", description="Modelo de IA padrão para o OpenAI (fallback)")
+    ai_model: str = Field(default="llama-3.1-8b-instant", description="Modelo de IA padrão para o Groq")
+    openai_model: str = Field(default="gpt-4o-mini-2024-07-18", description="Modelo de IA padrão para o OpenAI (fallback)")
     max_context_messages: int = Field(default=50, description="Número máximo de mensagens para manter no contexto")
 
     log_level: str = Field(default="INFO", description="Nível de logging")
