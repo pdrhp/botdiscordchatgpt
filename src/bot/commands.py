@@ -4,12 +4,12 @@ from discord.ext import commands
 import asyncio
 
 from src.utils.logger import get_logger
+from src.ai.message_store import MessageStore
+from src.ai.message_manager import message_manager
 from src.ai.groq import generate_response as groq_generate
 from src.ai.openai import generate_response as openai_generate
 
 logger = get_logger(__name__)
-
-from src.bot.client import message_manager
 
 async def register_commands(bot):
     try:

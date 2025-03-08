@@ -2,13 +2,10 @@ import discord
 from discord.ext import commands
 from discord.ext import tasks
 
-from src.bot.commands import register_commands
 from src.utils.logger import get_logger
-from src.ai.message_store import MessageManager
+from src.ai.message_manager import message_manager
 
 logger = get_logger(__name__)
-
-message_manager = MessageManager(use_persistence=True)
 
 def create_bot(config):
     intents = discord.Intents.default()
@@ -35,6 +32,7 @@ def create_bot(config):
         )
         await bot.change_presence(activity=activity)
 
+        from src.bot.commands import register_commands
         await register_commands(bot)
 
         logger.info("Bot está pronto para uso!")

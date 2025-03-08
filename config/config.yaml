@@ -1,0 +1,9 @@
+command_prefix: '!'
+description: Bot do Discord integrado com modelos de IA
+ai_model: llama-3.1-8b-instant
+openai_model: gpt-4o-mini-2024-07-18
+max_context_messages: 50
+log_level: INFO
+response_timeout: 30
+max_tokens: 1024
+temperature: 0.7
