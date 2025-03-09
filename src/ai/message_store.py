@@ -1,7 +1,3 @@
-"""
-Sistema de armazenamento de mensagens para manter contexto de conversas.
-"""
-
 import os
 import time
 import sqlite3
@@ -11,6 +7,7 @@ from pathlib import Path
 
 from src.utils.logger import get_logger
 from src.utils.config import get_config
+from src.ai.personality import create_system_message
 
 logger = get_logger(__name__)
 
@@ -55,6 +52,8 @@ class MessageStore:
 
     def get_messages(self) -> List[Dict[str, str]]:
         formatted_messages = []
+
+        formatted_messages.append(create_system_message())
 
         for msg in self.messages:
             if msg["role"] == "user":

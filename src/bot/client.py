@@ -1,3 +1,4 @@
+from ai.personality import get_personality
 import discord
 from discord.ext import commands
 from discord.ext import tasks
@@ -31,6 +32,9 @@ def create_bot(config):
             name=f"{command_prefix}ajuda | Conversando com IA"
         )
         await bot.change_presence(activity=activity)
+
+        from src.bot.commands import setup
+        setup(bot)
 
         from src.bot.commands import register_commands
         await register_commands(bot)
@@ -117,5 +121,89 @@ def create_bot(config):
         await bot.wait_until_ready()
 
     cleanup_old_data.start()
+
+    @bot.event
+    async def on_guild_join(guild):
+        logger.info(f"Bot adicionado ao servidor: {guild.name} (ID: {guild.id})")
+        logger.info(f"Proprietário: {guild.owner.name if guild.owner else 'Desconhecido'} (ID: {guild.owner.id if guild.owner else 'Desconhecido'})")
+        logger.info(f"Membros: {guild.member_count}")
+
+        try:
+            synced = await bot.tree.sync(guild=discord.Object(id=guild.id))
+            logger.info(f"Sincronizados {len(synced)} comandos para o servidor {guild.name}")
+        except Exception as e:
+            logger.error(f"Erro ao sincronizar comandos para o servidor {guild.name}: {e}")
+
+        target_channel = None
+
+        for channel in guild.text_channels:
+            if channel.name in ["geral", "general", "chat", "bem-vindo", "welcome"]:
+                target_channel = channel
+                logger.info(f"Canal encontrado para mensagem de boas-vindas: {channel.name} (ID: {channel.id})")
+                break
+
+        if target_channel is None and len(guild.text_channels) > 0:
+            target_channel = guild.text_channels[0]
+            logger.info(f"Usando primeiro canal disponível para mensagem de boas-vindas: {target_channel.name} (ID: {target_channel.id})")
+
+        if target_channel:
+            permissions = target_channel.permissions_for(guild.me)
+            logger.info(f"Permissões no canal {target_channel.name}: Enviar mensagens: {permissions.send_messages}, Incorporações: {permissions.embed_links}")
+
+        if target_channel and target_channel.permissions_for(guild.me).send_messages:
+            try:
+                current_personality = get_personality()
+                personality_preview = current_personality[:100] + "..." if len(current_personality) > 100 else current_personality
+
+                embed = discord.Embed(
+                    title=f"Olá, pessoal do servidor {guild.name}!",
+                    description="Sou um bot de IA que pode conversar com vocês usando uma personalidade customizável.",
+                    color=discord.Color.blue()
+                )
+                embed.add_field(
+                    name="Como me usar",
+                    value="Use `/conversar` ou me mencione em qualquer mensagem para falar comigo!",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Comandos disponíveis",
+                    value="`/ajuda` - Lista de comandos\n`/conversar` - Conversa comigo\n`/limpar` - Limpa o histórico\n`/personalidade` - Gerencia minha personalidade",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Minha personalidade atual",
+                    value=f"```{personality_preview}```",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Configuração",
+                    value="Administradores podem usar `/personalidade [nova]` para alterar minha personalidade!",
+                    inline=False
+                )
+                embed.set_footer(text=f"Desenvolvido com ❤️ | Versão: 1.0.0")
+
+                await target_channel.send(embed=embed)
+                logger.info(f"Mensagem de boas-vindas enviada com sucesso no canal {target_channel.name}")
+            except Exception as e:
+                logger.error(f"Erro ao enviar mensagem de boas-vindas: {e}")
+        elif target_channel:
+            logger.warning(f"Sem permissão para enviar mensagem no canal {target_channel.name}")
+        else:
+            logger.warning(f"Nenhum canal de texto encontrado no servidor {guild.name}")
+
+    @bot.event
+    async def on_guild_remove(guild):
+        logger.info(f"Bot removido do servidor: {guild.name} (ID: {guild.id})")
+
+        try:
+            channels_cleared = 0
+            for channel_id in list(message_manager.stores.keys()):
+                if str(channel_id).startswith(str(guild.id)):
+                    message_manager.clear_store(channel_id)
+                    channels_cleared += 1
+
+            logger.info(f"Limpados {channels_cleared} armazenamentos de mensagens do servidor {guild.name}")
+        except Exception as e:
+            logger.error(f"Erro ao limpar dados do servidor {guild.name}: {e}")
 
     return bot
